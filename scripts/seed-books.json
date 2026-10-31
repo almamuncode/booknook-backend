@@ -1,0 +1,56 @@
+[
+  {
+    "title": "The Secret Garden",
+    "author": "Frances Hodgson Burnett",
+    "category": "Fiction",
+    "description": "Behind a locked door lies a forgotten garden. Follow Mary Lennox as friendship, patience, and the natural world bring a quiet corner of Yorkshire back to life.",
+    "image": "https://covers.openlibrary.org/b/olid/OL37769873M-L.jpg?default=false",
+    "totalCopies": 4,
+    "availableCopies": 4
+  },
+  {
+    "title": "A Brief History of Time",
+    "author": "Stephen Hawking",
+    "category": "Science",
+    "description": "An invitation to explore the biggest questions about our universe, from the nature of time to the mysteries of black holes.",
+    "image": "https://covers.openlibrary.org/b/olid/OL7819689M-L.jpg?default=false",
+    "totalCopies": 2,
+    "availableCopies": 2
+  },
+  {
+    "title": "Little Women",
+    "author": "Louisa May Alcott",
+    "category": "Fiction",
+    "description": "Meet the March sisters as they navigate ambition, family, love, and the everyday adventures of growing up.",
+    "image": "https://covers.openlibrary.org/b/olid/OL7359590M-L.jpg?default=false",
+    "totalCopies": 3,
+    "availableCopies": 3
+  },
+  {
+    "title": "The Story of Art",
+    "author": "E. H. Gombrich",
+    "category": "History",
+    "description": "Discover how artists across centuries have seen the world and found new ways to share their visions.",
+    "image": "https://covers.openlibrary.org/b/isbn/9780714832470-L.jpg?default=false",
+    "totalCopies": 1,
+    "availableCopies": 1
+  },
+  {
+    "title": "The Little Prince",
+    "author": "Antoine de Saint-Exupéry",
+    "category": "Kids",
+    "description": "A small traveller from a distant planet shares an unforgettable story of friendship, imagination, and what makes life meaningful.",
+    "image": "https://covers.openlibrary.org/b/olid/OL8137011M-L.jpg?default=false",
+    "totalCopies": 5,
+    "availableCopies": 5
+  },
+  {
+    "title": "Walden",
+    "author": "Henry David Thoreau",
+    "category": "Others",
+    "description": "A thoughtful exploration of simple living, independence, and our relationship with the natural world.",
+    "image": "https://covers.openlibrary.org/b/olid/OL9869133M-L.jpg?default=false",
+    "totalCopies": 1,
+    "availableCopies": 1
+  }
+]
