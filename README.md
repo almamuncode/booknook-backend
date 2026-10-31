@@ -54,3 +54,16 @@ No credentials are committed. The backend has a local Git repository with eight 
 GET `/books?page=2&limit=12&category=Science&q=biology` returns `{ books, total, page, pageSize, totalPages }`. Filtering and pagination run in MongoDB; totals use the same filters. Omit `page` to keep the original array response, including the homepage request `/books?limit=6`. Pages beyond the last page return an empty books array and the matching total.
 
 The checked-in seed snapshot includes 66 books with original published cover URLs. Imported metadata (title, primary author, first-publication year, source work and cover identifier) comes from Open Library. Imported descriptions are bibliographic notes; stock counts and dates added are demo inventory. Run `npm run seed` after configuring MongoDB to populate a live database. It uses stable seed keys and never overwrites existing inventory, loans, or edited records.
+
+## Vercel deployment
+
+The root `index.js` exports the Express application for Vercel. `src/app.js` remains a dependency-injected factory for tests, and `src/server.js` starts the local listener. The serverless entry initializes MongoDB on the first API request, reuses it for warm requests, and returns JSON 503 errors if initialization fails. `GET /` identifies the service without accessing the database; `GET /health` returns ready only after database connection and index creation succeed.
+
+Production backend variables:
+
+- `MONGODB_URI`: Atlas connection string.
+- `MONGODB_DB`: same database name used by frontend authentication.
+- `FRONTEND_URL` and `AUTH_ISSUER`: `https://booknook-frontend-eight.vercel.app` (without trailing slash).
+- `AUTH_AUDIENCE`: `https://booknook-backend-seven.vercel.app` (same value on frontend).
+
+Then set frontend `NEXT_PUBLIC_API_URL` to `https://booknook-backend-seven.vercel.app`, `BETTER_AUTH_URL` to the frontend origin, and enable `NEXT_PUBLIC_ENABLE_LIVE_API=true` only after the backend and catalog import are ready. Redeploy after updating environment variables.
