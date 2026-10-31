@@ -38,3 +38,16 @@ test('a book with active borrows cannot be deleted',async()=>{
  const {repo}=fixture({findOne:async()=>({_id:new ObjectId(bookId),ownerId:user.id,totalCopies:2,availableCopies:1})},{});
  await assert.rejects(()=>repo.deleteBook(bookId,user),error=>error.status===409);
 });
+test('paginated books use matching filters for rows and totals and redact private email',async()=>{
+ let found,counted,projection,offset,size,sort;
+ const cursor={sort:value=>{sort=value;return cursor;},skip:value=>{offset=value;return cursor;},limit:value=>{size=value;return cursor;},toArray:async()=>[{title:'Page three'}]};
+ const {repo}=fixture({find:(query,options)=>{found=query;projection=options.projection;return cursor;},countDocuments:async query=>{counted=query;return 37;}},{});
+ const result=await repo.listBooks({filter:{category:'Science'},limit:12,page:3});
+ assert.deepEqual(found,{category:'Science'});assert.deepEqual(counted,found);assert.deepEqual(projection,{ownerEmail:0});assert.deepEqual(sort,{createdAt:-1,_id:-1});assert.equal(offset,24);assert.equal(size,12);
+ assert.deepEqual(result,{books:[{title:'Page three'}],total:37,page:3,pageSize:12,totalPages:4});
+});
+test('legacy latest-books requests remain arrays without a count query',async()=>{
+ const cursor={sort:()=>cursor,limit:()=>cursor,toArray:async()=>[{title:'Latest'}]};
+ const {repo}=fixture({find:()=>cursor},{});
+ assert.deepEqual(await repo.listBooks({filter:{},limit:6}),[{title:'Latest'}]);
+});

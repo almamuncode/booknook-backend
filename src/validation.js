@@ -32,5 +32,7 @@ export function listInput(query) {
  if(query.q) { if(typeof query.q !== 'string' || query.q.length > 150) throw new HttpError(400,'Search must be under 151 characters.');const escaped=query.q.trim().replace(/[.*+?^${}()|[\]\\]/g,'\\$&');filter.$or=[{title:{$regex:escaped,$options:'i'}},{author:{$regex:escaped,$options:'i'}}]; }
  const limit=query.limit===undefined?100:Number(query.limit);
  if(!Number.isInteger(limit)||limit<1||limit>500) throw new HttpError(400,'Limit must be between 1 and 500.');
- return {filter,limit,mine:query.mine==='true'};
+ const page=query.page===undefined?undefined:Number(query.page);
+ if(page!==undefined && (!Number.isInteger(page)||page<1||page>100000))throw new HttpError(400,'Page must be a whole number from 1 to 100000.');
+ return {filter,limit,page,mine:query.mine==='true'};
 }

@@ -21,13 +21,13 @@ npm run seed
 npm start
 ```
 
-Seeding is optional and idempotent. It adds six sample books without overwriting existing copy counts. Community-owned sample books can be borrowed but cannot be edited by ordinary accounts. To own the samples, set `SEED_OWNER_ID`, `SEED_OWNER_NAME`, and `SEED_OWNER_EMAIL` to an actual Better Auth account before the first seed.
+Seeding is optional and idempotent. It adds 66 catalog books (six curated samples and 60 sourced Open Library records) without overwriting existing copy counts. Community-owned sample books can be borrowed but cannot be edited by ordinary accounts. To own the samples, set `SEED_OWNER_ID`, `SEED_OWNER_NAME`, and `SEED_OWNER_EMAIL` to an actual Better Auth account before the first seed.
 
 ## Routes
 
 | Method | Path | Access |
 | --- | --- | --- |
-| GET | `/books` | Public; `q`, `category`, `limit`; newest first |
+| GET | `/books` | Public; `q`, `category`, `limit`, optional `page`; newest first |
 | GET | `/books?mine=true` | Signed-in user's books |
 | GET | `/books/:id` | Signed in |
 | POST | `/books` | Signed in |
@@ -45,6 +45,12 @@ Borrow/return, total-copy changes, and deletion run in MongoDB transactions. Bor
 
 ## Verification and limits
 
-Fifteen tests cover validation, JWT identity/audience/expiry, ownership, duplicate borrowing, stock limits, transaction use, and deletion restrictions. Repository tests use fake collections; they do not replace integration tests against a real MongoDB replica set. Database connectivity, Google OAuth, imgbb uploads, and full live browser flows require credentials and have not yet been verified.
+Eighteen tests cover validation, JWT identity/audience/expiry, ownership, duplicate borrowing, stock limits, transaction use, and deletion restrictions. Repository tests use fake collections; they do not replace integration tests against a real MongoDB replica set. Database connectivity, Google OAuth, imgbb uploads, and full live browser flows require credentials and have not yet been verified.
 
 No credentials are committed. The backend has a local Git repository with eight feature-based commits. A GitHub remote has not yet been configured.
+
+## Catalog and pagination
+
+GET `/books?page=2&limit=12&category=Science&q=biology` returns `{ books, total, page, pageSize, totalPages }`. Filtering and pagination run in MongoDB; totals use the same filters. Omit `page` to keep the original array response, including the homepage request `/books?limit=6`. Pages beyond the last page return an empty books array and the matching total.
+
+The checked-in seed snapshot includes 66 books with original published cover URLs. Imported metadata (title, primary author, first-publication year, source work and cover identifier) comes from Open Library. Imported descriptions are bibliographic notes; stock counts and dates added are demo inventory. Run `npm run seed` after configuring MongoDB to populate a live database. It uses stable seed keys and never overwrites existing inventory, loans, or edited records.

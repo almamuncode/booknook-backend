@@ -14,7 +14,13 @@ export function createRepository(client, db) {
    await borrows.createIndex({userId:1,bookId:1},{unique:true});
    await borrows.createIndex({bookId:1});
   },
-  async listBooks({filter,limit},user) {return books.find({...filter,...(user?{ownerId:user.id}:{})},{projection:user?{}:{ownerEmail:0}}).sort({createdAt:-1,_id:-1}).limit(limit).toArray();},
+  async listBooks({filter,limit,page},user) {
+   const query={...filter,...(user?{ownerId:user.id}:{})};
+   const cursor=books.find(query,{projection:user?{}:{ownerEmail:0}}).sort({createdAt:-1,_id:-1});
+   if(page===undefined)return cursor.limit(limit).toArray();
+   const [items,total]=await Promise.all([cursor.skip((page-1)*limit).limit(limit).toArray(),books.countDocuments(query)]);
+   return {books:items,total,page,pageSize:limit,totalPages:Math.ceil(total/limit)};
+  },
   async getBook(bookId) {const book=await books.findOne({_id:id(bookId)});if(!book)throw new HttpError(404,'Book not found.');return book;},
   async addBook(data,user) {
    const book={...data,availableCopies:data.totalCopies,ownerId:user.id,ownerName:user.name,ownerEmail:user.email,createdAt:new Date(),updatedAt:new Date()};
