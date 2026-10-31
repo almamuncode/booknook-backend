@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {generateKeyPair,exportJWK,createLocalJWKSet,SignJWT} from 'jose';
+import {createTokenVerifier,requireAuth} from '../src/auth.js';
+const issuer='http://localhost:3000',audience='http://localhost:5000';
+const {publicKey,privateKey}=await generateKeyPair('EdDSA');
+const jwk=await exportJWK(publicKey);jwk.kid='test';
+const verify=createTokenVerifier({issuer,audience,jwks:createLocalJWKSet({keys:[jwk]})});
+const token=(aud=audience,expiry='1m')=>new SignJWT({email:'reader@example.com',name:'Reader'}).setProtectedHeader({alg:'EdDSA',kid:'test'}).setSubject('reader-id').setIssuer(issuer).setAudience(aud).setIssuedAt().setExpirationTime(expiry).sign(privateKey);
+test('valid signed token supplies verified identity',async()=>{assert.deepEqual(await verify(await token()),{id:'reader-id',email:'reader@example.com',name:'Reader'});});
+test('wrong audience and expired tokens are rejected',async()=>{await assert.rejects(()=>token('wrong').then(verify));await assert.rejects(()=>token(audience,'-1s').then(verify));});
+test('missing bearer token never reaches protected handler',async()=>{let error;await requireAuth(verify)({get:()=>undefined},{},value=>{error=value;});assert.equal(error.status,401);});
